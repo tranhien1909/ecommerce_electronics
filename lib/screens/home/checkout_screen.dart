@@ -101,9 +101,7 @@ class CheckoutScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Thanh toán thành công (demo)'),
-                        ),
+                        const SnackBar(content: Text('Thanh toán thành công')),
                       );
                     },
                     child: const Text(
