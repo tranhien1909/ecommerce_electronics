@@ -37,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Row(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.pop(context), // ✅ quay lại Login
+                  onTap: () => Navigator.pop(context), // quay lại Login
                   child: const Text(
                     'Đăng nhập',
                     style: TextStyle(color: Colors.grey),
@@ -91,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               onPressed: auth.isLoading
                   ? () {}
                   : () async {
-                      // ✅ Validate trước khi gọi API
+                      // Validate trước khi gọi API
                       final okForm = _formKey.currentState?.validate() ?? false;
                       if (!okForm) return;
 

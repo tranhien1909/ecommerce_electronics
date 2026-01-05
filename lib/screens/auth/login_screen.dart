@@ -52,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: passCtrl,
             hint: 'Nhập mật khẩu',
             obscure: true,
+            showToggle: true, // 👈 bật icon con mắt
           ),
 
           const SizedBox(height: 10),

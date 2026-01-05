@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 
-class CheckoutScreen extends StatelessWidget {
+enum PaymentMethod { bank, cash }
+
+class CheckoutScreen extends StatefulWidget {
   final double totalPrice;
 
   const CheckoutScreen({super.key, required this.totalPrice});
 
   @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  PaymentMethod _selectedMethod = PaymentMethod.bank;
+
+  @override
   Widget build(BuildContext context) {
     const shippingFee = 50000.0;
-    final finalTotal = totalPrice + shippingFee;
+    final finalTotal = widget.totalPrice + shippingFee;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Thanh toán')),
@@ -66,17 +75,17 @@ class CheckoutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            _paymentTile(
+            _paymentRadioTile(
               image:
                   'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d',
               title: 'Thẻ ngân hàng',
-              selected: true,
+              value: PaymentMethod.bank,
             ),
-            _paymentTile(
+            _paymentRadioTile(
               image:
                   'https://png.pngtree.com/png-clipart/20190322/ourmid/pngtree-creative-stereo-dollar-stacked-paper-money-elements-png-image_858180.jpg',
               title: 'Tiền mặt',
-              selected: false,
+              value: PaymentMethod.cash,
             ),
 
             const Spacer(),
@@ -84,7 +93,7 @@ class CheckoutScreen extends StatelessWidget {
             // ===== SUMMARY =====
             Column(
               children: [
-                _summaryRow('Tổng tiền sản phẩm', totalPrice),
+                _summaryRow('Tổng tiền sản phẩm', widget.totalPrice),
                 _summaryRow('Phí vận chuyển', shippingFee),
                 const Divider(),
                 _summaryRow('Tổng tiền', finalTotal, bold: true),
@@ -101,7 +110,13 @@ class CheckoutScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Thanh toán thành công')),
+                        SnackBar(
+                          content: Text(
+                            _selectedMethod == PaymentMethod.bank
+                                ? 'Thanh toán bằng thẻ ngân hàng thành công'
+                                : 'Thanh toán tiền mặt thành công',
+                          ),
+                        ),
                       );
                     },
                     child: const Text(
@@ -118,39 +133,49 @@ class CheckoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _paymentTile({
+  // ===== RADIO TILE =====
+  Widget _paymentRadioTile({
     required String image,
     required String title,
-    required bool selected,
+    required PaymentMethod value,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-        ],
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              image,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
+    final selected = _selectedMethod == value;
+
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedMethod = value;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                image,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title)),
-          Icon(
-            selected ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: selected ? AppColors.primary : Colors.grey,
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(child: Text(title)),
+            Icon(
+              selected ? Icons.check_circle : Icons.radio_button_unchecked,
+              color: selected ? AppColors.primary : Colors.grey,
+            ),
+          ],
+        ),
       ),
     );
   }

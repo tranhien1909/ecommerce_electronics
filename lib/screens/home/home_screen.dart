@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      // 🔽 BOTTOM NAV
+      // BOTTOM NAV
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: AppColors.primary,

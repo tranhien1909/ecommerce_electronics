@@ -162,11 +162,17 @@ class _CartScreenState extends State<CartScreen> {
         currentIndex: _currentIndex,
         selectedItemColor: AppColors.primary,
         onTap: (index) {
+          setState(() => _currentIndex = index);
+
           if (index == 0) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const HomeScreen()),
             );
+          }
+
+          if (index == 2) {
+            _showProfileSheet(context);
           }
         },
         items: const [
