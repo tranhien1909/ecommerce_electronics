@@ -15,6 +15,10 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   PaymentMethod _selectedMethod = PaymentMethod.bank;
 
+  // ===== ADDRESS STATE =====
+  String _placeName = 'Đại học Sài Gòn';
+  String _addressDetail = '475 An Dương Vương, Phường 3, Quận 5';
+
   @override
   Widget build(BuildContext context) {
     const shippingFee = 50000.0;
@@ -45,23 +49,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ],
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.location_on, color: AppColors.primary),
-                  SizedBox(width: 8),
+                  const Icon(Icons.location_on, color: AppColors.primary),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Đại học Sài Gòn'),
+                        Text(_placeName),
                         Text(
-                          '475 An Dương Vương, Phường 3, Quận 5',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          _addressDetail,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Text('Thay đổi', style: TextStyle(color: AppColors.primary)),
+                  GestureDetector(
+                    onTap: _showChangeAddressSheet,
+                    child: const Text(
+                      'Thay đổi',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -133,7 +146,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  // ===== RADIO TILE =====
+  // ===== PAYMENT RADIO TILE =====
   Widget _paymentRadioTile({
     required String image,
     required String title,
@@ -180,6 +193,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  // ===== SUMMARY ROW =====
   Widget _summaryRow(String label, double value, {bool bold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -194,6 +208,83 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ===== CHANGE ADDRESS SHEET =====
+  void _showChangeAddressSheet() {
+    final placeCtrl = TextEditingController(text: _placeName);
+    final addressCtrl = TextEditingController(text: _addressDetail);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Thay đổi địa chỉ',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: placeCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Tên địa điểm',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            TextField(
+              controller: addressCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Địa chỉ chi tiết',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+            ),
+
+            const SizedBox(height: 16),
+
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _placeName = placeCtrl.text;
+                    _addressDetail = addressCtrl.text;
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Lưu địa chỉ',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
