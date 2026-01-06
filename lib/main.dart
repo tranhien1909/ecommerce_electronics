@@ -6,18 +6,27 @@ import 'screens/home/home_screen.dart';
 import 'providers/product_provider.dart';
 import 'providers/cart_provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // TẠO AUTH PROVIDER VÀ LOAD SESSION TRƯỚC
+  final authProvider = AuthProvider();
+  await authProvider.loadSession();
+
+  runApp(MyApp(authProvider: authProvider));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AuthProvider authProvider;
+
+  const MyApp({super.key, required this.authProvider});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()..loadSession()),
+        // DÙNG .value ĐỂ GIỮ INSTANCE ĐÃ LOAD SESSION
+        ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
@@ -37,6 +46,8 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
-    return auth.user == null ? const LoginScreen() : HomeScreen();
+
+    // QUYẾT ĐỊNH MÀN HÌNH DỰA TRÊN SESSION
+    return auth.user == null ? const LoginScreen() : const HomeScreen();
   }
 }

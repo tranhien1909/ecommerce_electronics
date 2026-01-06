@@ -96,9 +96,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (!okForm) return;
 
                       final ok = await context.read<AuthProvider>().register(
-                        nameCtrl.text.trim(),
-                        emailCtrl.text.trim(),
-                        passCtrl.text.trim(),
+                        emailCtrl.text,
+                        passCtrl.text,
                       );
 
                       if (!context.mounted) return;
